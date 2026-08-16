@@ -8,6 +8,13 @@ rapidfuzz==3.9.7
 # Local/free speech-to-text (no per-minute API cost)
 faster-whisper==1.0.3
 
+# faster-whisper's model downloader (huggingface_hub) imports this lazily on
+# first use, not at package-install time -- without it pinned here, the very
+# first transcription attempt on a fresh deploy crashes with
+# "ModuleNotFoundError: No module named 'requests'" (500 Internal Server
+# Error on /api/speeches/ingest-audio). Confirmed via live Render logs.
+requests==2.32.3
+
 # Optional, only needed if you upgrade speaker separation beyond the
 # name-matching heuristic in services/speaker_id.py:
 # pyannote.audio==3.3.1   (requires a free Hugging Face token)

@@ -12,7 +12,12 @@ DB_PATH = os.environ.get("TM_DB_PATH", os.path.join(os.path.dirname(__file__), "
 SQLALCHEMY_DATABASE_URL = os.environ.get("TM_DATABASE_URL", f"sqlite:///{DB_PATH}")
 
 connect_args = {"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=connect_args)
+# pool_pre_ping: test each pooled connection before using it and silently
+# reconnect if it's gone stale. Needed for free-tier hosted Postgres (e.g.
+# Neon), which closes idle connections server-side -- without this, requests
+# intermittently fail with "psycopg2.OperationalError: SSL connection has
+# been closed unexpectedly". Harmless no-op for SQLite.
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=connect_args, pool_pre_ping=True, pool_recycle=280)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
