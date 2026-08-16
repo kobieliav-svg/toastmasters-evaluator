@@ -11,7 +11,7 @@ services:
     plan: free
     envVars:
       - key: TM_WHISPER_MODEL
-        value: tiny.en
+        value: base.en
       - key: TM_DATABASE_URL
         sync: false   # set manually in the Render dashboard: your Neon Postgres URL
       - key: SMTP_HOST
