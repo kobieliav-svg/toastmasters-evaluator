@@ -2,6 +2,7 @@ import os
 import tempfile
 import datetime
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
@@ -105,7 +106,16 @@ async def ingest_audio(
         tmp.write(await file.read())
         tmp_path = tmp.name
     try:
-        transcript = transcription.transcribe_audio_file(tmp_path)
+        # Runs off the event loop, in a worker thread: transcription (and,
+        # on the very first call after a cold start / fresh deploy, a
+        # one-time download of the Whisper model from Hugging Face) is
+        # slow and CPU/network-bound. With WEB_CONCURRENCY=1 (render.yaml),
+        # calling this directly inside the async endpoint would block the
+        # single worker's event loop for the whole download+transcribe
+        # duration -- freezing every other request (including the
+        # dashboard's own polling) for minutes. Confirmed live: the site
+        # became fully unresponsive for ~3 minutes on first use post-deploy.
+        transcript = await run_in_threadpool(transcription.transcribe_audio_file, tmp_path)
         if duration_seconds is not None:
             duration = duration_seconds
         else:
