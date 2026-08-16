@@ -1,0 +1,26 @@
+# Render "Blueprint" — lets Render auto-configure the web service just by
+# pointing it at this repo (Dashboard -> New -> Blueprint -> pick this repo).
+# You still need to set the secret env vars (TM_DATABASE_URL, SMTP_*) by
+# hand in the Render dashboard after the first deploy -- see README.md.
+services:
+  - type: web
+    name: toastmasters-evaluator
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: TM_WHISPER_MODEL
+        value: tiny.en
+      - key: TM_DATABASE_URL
+        sync: false   # set manually in the Render dashboard: your Neon Postgres URL
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM_NAME
+        sync: false

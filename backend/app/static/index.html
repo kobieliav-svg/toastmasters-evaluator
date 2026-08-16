@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Toastmasters Speech Evaluator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Toastmasters Speech Evaluator</h1>
+    <nav>
+      <button data-tab="participants" class="tab-btn active">Participants</button>
+      <button data-tab="sessions" class="tab-btn">Meeting Sessions</button>
+      <button data-tab="history" class="tab-btn">History &amp; Trends</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- PARTICIPANTS TAB -->
+    <section id="tab-participants" class="tab active">
+      <h2>Club Roster</h2>
+      <p class="hint">Add each member once. They stay here permanently and every future evaluation links back to their name.</p>
+      <form id="participant-form">
+        <input name="name" placeholder="Full name" required>
+        <input name="aliases" placeholder="Aliases / nicknames (comma-separated)">
+        <input name="email" placeholder="Email (optional)">
+        <select name="club_role">
+          <option value="member">Member</option>
+          <option value="officer">Officer</option>
+          <option value="mentor">Mentor</option>
+        </select>
+        <button type="submit">Add participant</button>
+      </form>
+      <table id="participants-table">
+        <thead><tr><th>Name</th><th>Aliases</th><th>Role</th><th>Email</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- SESSIONS TAB -->
+    <section id="tab-sessions" class="tab">
+      <h2>Meeting Sessions</h2>
+      <p class="hint">Each meeting is one session. Open a session below, then click "Start Listening" — your browser will ask for microphone access (for anyone speaking in the room) and offer to share your screen with audio (for remote Zoom participants). Both are optional; use either or both for a hybrid meeting. No installs, no terminal.</p>
+      <form id="session-form">
+        <input name="title" placeholder="Meeting title (e.g. 2026-07-28 Club Meeting)">
+        <input name="zoom_meeting_id" placeholder="Zoom meeting ID (optional)">
+        <button type="submit">Create session</button>
+      </form>
+      <table id="sessions-table">
+        <thead><tr><th>Date</th><th>Title</th><th>Status</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="session-detail" style="display:none">
+        <div class="live-box" id="listen-box">
+          <button id="start-listening-btn">▶ Start Listening</button>
+          <button id="stop-listening-btn" style="display:none">■ Stop Listening</button>
+          <span id="listen-status" class="hint">Not listening.</span>
+        </div>
+        <div id="listen-log" class="log-box" style="display:none"></div>
+
+        <div class="live-box">
+          <strong>Now speaking:</strong>
+          <select id="current-speaker-select"><option value="">— nobody set (auto-detect) —</option></select>
+          <button id="set-current-speaker-btn">Set</button>
+          <span id="current-speaker-status" class="hint"></span>
+        </div>
+
+        <h3>Speeches in this session <span class="hint">(auto-refreshes while this tab is open)</span></h3>
+        <table id="speeches-table">
+          <thead><tr><th>Speaker</th><th>Type</th><th>Duration</th><th>WPM</th><th>Filler words</th><th>Score</th><th>Feedback</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+
+        <details>
+          <summary>Manually upload a recording instead (optional)</summary>
+          <form id="ingest-audio-form" enctype="multipart/form-data">
+            <input type="hidden" name="session_id">
+            <select name="speech_type">
+              <option value="table_topic">Table Topic (1-2 min)</option>
+              <option value="speech">Prepared Speech (5-7 min)</option>
+            </select>
+            <input name="project_title" placeholder="Project / topic title">
+            <select name="participant_id" id="ingest-participant-select">
+              <option value="">Auto-detect speaker from audio</option>
+            </select>
+            <input type="file" name="file" accept="audio/*,video/*" required>
+            <button type="submit">Upload &amp; evaluate</button>
+          </form>
+        </details>
+      </div>
+    </section>
+
+    <!-- HISTORY TAB -->
+    <section id="tab-history" class="tab">
+      <h2>History &amp; Trends</h2>
+      <p class="hint">Pick a participant to see their score trend over time (the running goal: fewer fillers, steadier pace, tighter timing, stronger structure).</p>
+      <select id="trend-participant-select"></select>
+      <canvas id="trend-chart" height="100"></canvas>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

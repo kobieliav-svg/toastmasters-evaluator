@@ -1,0 +1,24 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+sqlalchemy==2.0.35
+pydantic==2.9.2
+python-multipart==0.0.9
+rapidfuzz==3.9.7
+
+# Local/free speech-to-text (no per-minute API cost)
+faster-whisper==1.0.3
+
+# Optional, only needed if you upgrade speaker separation beyond the
+# name-matching heuristic in services/speaker_id.py:
+# pyannote.audio==3.3.1   (requires a free Hugging Face token)
+
+# Optional, only needed if you later enable LLM-based narrative feedback
+# instead of the default rule-based engine:
+# anthropic==0.34.0
+
+# Needed only if you set TM_DATABASE_URL to a postgresql:// URL for a cloud
+# deployment (e.g. a free Neon.tech database) instead of the default local
+# SQLite file. Harmless to have installed even if you never use Postgres.
+psycopg2-binary==2.9.9
+
+pytest==8.3.3

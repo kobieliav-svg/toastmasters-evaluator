@@ -1,0 +1,14 @@
+# Local virtual environments
+venv*/
+backend/venv*/
+__pycache__/
+*.pyc
+
+# Local database + logs
+*.db
+*.db-journal
+.pytest_cache/
+
+# OS junk
+.DS_Store
+Thumbs.db

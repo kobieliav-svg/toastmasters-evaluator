@@ -1,0 +1,31 @@
+:root {
+  --accent: #772432; /* Toastmasters-ish maroon */
+  --bg: #f7f5f2;
+  --card: #ffffff;
+  --text: #232323;
+}
+* { box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
+header { background: var(--accent); color: white; padding: 1rem 1.5rem; }
+header h1 { margin: 0 0 .5rem 0; font-size: 1.3rem; }
+nav button { background: transparent; border: 1px solid rgba(255,255,255,.5); color: white; padding: .4rem .9rem; margin-right: .5rem; border-radius: 6px; cursor: pointer; }
+nav button.active { background: white; color: var(--accent); font-weight: 600; }
+main { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+.tab { display: none; background: var(--card); padding: 1.2rem; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.tab.active { display: block; }
+.hint { color: #666; font-size: .9rem; margin-top: -.3rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+input, select, button { padding: .5rem .6rem; border-radius: 6px; border: 1px solid #ccc; font-size: .95rem; }
+button[type=submit] { background: var(--accent); color: white; border: none; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { text-align: left; padding: .5rem; border-bottom: 1px solid #eee; font-size: .9rem; vertical-align: top; }
+th { color: #888; font-weight: 600; text-transform: uppercase; font-size: .75rem; }
+.score-pill { display: inline-block; padding: .1rem .5rem; border-radius: 10px; font-weight: 600; color: white; }
+pre.feedback { white-space: pre-wrap; font-family: inherit; font-size: .85rem; margin: 0; max-width: 320px; }
+.live-box { background: #fdf3e7; border: 1px solid #f0d9b5; border-radius: 8px; padding: .6rem 1rem; margin: 1rem 0; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+button:disabled { opacity: .6; cursor: default; }
+details summary { cursor: pointer; }
+code { background: #eee; padding: .1rem .3rem; border-radius: 4px; }
+#start-listening-btn, #stop-listening-btn { background: var(--accent); color: white; border: none; font-weight: 600; padding: .5rem 1rem; }
+#stop-listening-btn { background: #555; }
+.log-box { background: #1e1e1e; color: #9fe09f; font-family: monospace; font-size: .78rem; padding: .6rem .8rem; border-radius: 8px; max-height: 160px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 1rem; }
