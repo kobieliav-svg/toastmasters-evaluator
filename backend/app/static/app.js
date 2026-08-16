@@ -98,10 +98,31 @@ async function openSession(id) {
   document.querySelector('#ingest-audio-form [name=session_id]').value = id;
   await loadSpeeches(id);
   await refreshCurrentSpeakerStatus(id);
+  await refreshSessionStatus(id);
 
   if (speechPollTimer) clearInterval(speechPollTimer);
   speechPollTimer = setInterval(() => loadSpeeches(currentSessionId), 4000);
 }
+
+async function refreshSessionStatus(id) {
+  const list = await api('/api/sessions');
+  const s = list.find(x => x.id == id);
+  const label = document.getElementById('session-status-label');
+  const btn = document.getElementById('complete-session-btn');
+  if (!s) return;
+  label.textContent = s.status;
+  const isCompleted = s.status === 'completed';
+  btn.style.display = isCompleted ? 'none' : '';
+  document.getElementById('start-listening-btn').disabled = isCompleted;
+}
+
+document.getElementById('complete-session-btn').addEventListener('click', async () => {
+  if (!currentSessionId) return;
+  if (listenState.active) stopListening();
+  await api(`/api/sessions/${currentSessionId}/complete`, { method: 'POST' });
+  await refreshSessionStatus(currentSessionId);
+  await loadSessions();
+});
 
 async function refreshCurrentSpeakerStatus(sessionId) {
   const cur = await api(`/api/sessions/${sessionId}/current-speaker`);
@@ -386,6 +407,8 @@ async function uploadTurn(blob, durationSeconds) {
   fd.append('speaker_name_raw', '');
   fd.append('duration_seconds', durationSeconds.toFixed(1));
   fd.append('file', blob, 'turn.webm');
+  setListenStatus('Processing last turn (transcribing)...');
+  logLine('Uploading & transcribing turn -- this takes a few seconds, listening continues in the background...');
   try {
     const resp = await fetch('/api/speeches/ingest-audio', { method: 'POST', body: fd });
     if (!resp.ok) throw new Error((await resp.json()).detail || resp.statusText);
@@ -396,6 +419,8 @@ async function uploadTurn(blob, durationSeconds) {
     loadSpeeches(currentSessionId);
   } catch (err) {
     logLine('Upload failed: ' + err.message);
+  } finally {
+    if (listenState.active) setListenStatus('Listening...');
   }
 }
 
