@@ -55,7 +55,9 @@ SAMPLE_RATE = 16000
 FRAME_MS = 100                       # size of each analysis chunk
 FRAME_SAMPLES = SAMPLE_RATE * FRAME_MS // 1000
 CALIBRATION_SECONDS = 2.0            # measure ambient noise floor at startup
-SILENCE_HANGOVER_SEC = 1.2           # silence needed to end a turn
+SILENCE_HANGOVER_SEC = 10.0          # silence needed to end a turn (kept in
+                                      # sync with app.js -- long, by request,
+                                      # to avoid splitting one answer in two)
 MIN_TURN_SECONDS = 3.0               # discard shorter blips (coughs, "yeah")
 MAX_TURN_SECONDS = 480               # safety cap (8 min) so a stuck VAD can't buffer forever
 PRE_ROLL_FRAMES = 3                  # keep a little audio from just before speech was detected

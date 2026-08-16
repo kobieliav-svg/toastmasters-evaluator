@@ -219,13 +219,12 @@ document.getElementById('ingest-audio-form').addEventListener('submit', async (e
 const VAD = {
   FRAME_MS: 100,
   CALIBRATION_MS: 2000,
-  // How long a silence has to last before we decide the turn is over. 1200ms
-  // was too trigger-happy -- a normal thinking pause in a Table Topics
-  // answer easily runs past 1.2s, so one continuous answer was getting
-  // chopped into 2-3 separate "speeches" (confirmed live: two answers
-  // produced four rows). 2500ms tolerates a real pause while still closing
-  // the turn promptly once someone actually stops talking.
-  SILENCE_HANGOVER_MS: 2500,
+  // How long a silence has to last before we decide the turn is over.
+  // Set high (10s) by explicit request: the user would rather wait a few
+  // extra seconds of silence before the turn closes than risk one
+  // continuous answer getting split into multiple "speeches" (this
+  // happened at 1.2s, and still happened occasionally at 2.5s).
+  SILENCE_HANGOVER_MS: 10000,
   MIN_TURN_MS: 3000,
   MAX_TURN_MS: 480000,
 };
