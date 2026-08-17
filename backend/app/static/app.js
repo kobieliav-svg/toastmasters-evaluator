@@ -131,7 +131,7 @@ async function refreshCurrentSpeakerStatus(sessionId) {
   document.getElementById('current-speaker-select').value = cur.participant_id || '';
 }
 
-document.getElementById('set-current-speaker-btn').addEventListener('click', async () => {
+async function setCurrentSpeakerFromDropdown() {
   const sel = document.getElementById('current-speaker-select');
   const participant_id = sel.value ? parseInt(sel.value) : null;
   await api(`/api/sessions/${currentSessionId}/current-speaker`, {
@@ -139,8 +139,11 @@ document.getElementById('set-current-speaker-btn').addEventListener('click', asy
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ participant_id }),
   });
-  refreshCurrentSpeakerStatus(currentSessionId);
-});
+  await refreshCurrentSpeakerStatus(currentSessionId);
+  return participant_id;
+}
+
+document.getElementById('set-current-speaker-btn').addEventListener('click', setCurrentSpeakerFromDropdown);
 
 function scoreColor(score) {
   if (score >= 8) return '#2e7d32';
@@ -262,9 +265,16 @@ async function startListening() {
   // harder to fix after the fact than just picking a name up front.
   const speakerSel = document.getElementById('current-speaker-select');
   if (!speakerSel.value) {
-    alert('Please select who\'s speaking first: use the "Now speaking" dropdown above and click "Set", then start listening.');
+    alert('Please select who\'s speaking first: use the "Now speaking" dropdown above, then start listening.');
     return;
   }
+  // Persist the dropdown's current selection as the session's speaker,
+  // even if "Set" was never explicitly clicked -- otherwise the dropdown
+  // can show a name while the server still has no (or a stale) current
+  // speaker, and every turn silently comes back "(unmatched)". Confirmed
+  // live: this exact gap caused a completed, well-scored speech to have
+  // no participant attached.
+  await setCurrentSpeakerFromDropdown();
 
   const sources = [];
 
