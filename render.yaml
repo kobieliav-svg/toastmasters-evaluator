@@ -11,7 +11,13 @@ services:
     plan: free
     envVars:
       - key: TM_WHISPER_MODEL
-        value: base.en
+        value: tiny.en
+        # Reverted from base.en: confirmed live that the free tier's 512MB
+        # RAM is not enough to hold base.en loaded + run inference without
+        # the process getting OOM-killed mid-transcription -- Render logs
+        # showed the server silently restarting right in the middle of a
+        # transcription request, which is why the turn never finished /
+        # never showed up. tiny.en fits comfortably and is reliable here.
       - key: TM_DATABASE_URL
         sync: false   # set manually in the Render dashboard: your Neon Postgres URL
       - key: SMTP_HOST
